@@ -10,39 +10,32 @@
 
 // export { };
 
-
-// Клас Key
 class Key {
-  private signature: number;
-  constructor() {
-    this.signature = Math.random();
-  }
-  getSignature() {
+  private signature: number = Math.random();
+
+  getSignature(): number {
     return this.signature;
   }
 }
 
-// Клас Person
 class Person {
-  private key: Key;
-  constructor(key: Key) {
-    this.key = key;
-  }
-  getKey() {
+  constructor(private key: Key) {}
+
+  getKey(): Key {
     return this.key;
   }
 }
 
-// Абстрактний клас House
 abstract class House {
   protected door: boolean = false;
   protected key: Key;
   private tenants: Person[] = [];
+
   constructor(key: Key) {
     this.key = key;
   }
 
-  comeIn(person: Person) {
+  comeIn(person: Person): void {
     if (this.door) {
       this.tenants.push(person);
       console.log("Людина увійшла в дім.");
@@ -54,9 +47,8 @@ abstract class House {
   abstract openDoor(key: Key): void;
 }
 
-// Клас MyHouse успадкуємо від абстрактного класу House
 class MyHouse extends House {
-  openDoor(key: Key) {
+  openDoor(key: Key): void {
     if (key.getSignature() === this.key.getSignature()) {
       this.door = true;
       console.log("Двері відчинено.");
@@ -70,7 +62,7 @@ const key = new Key();
 const person = new Person(key);
 const house = new MyHouse(key);
 
-house.openDoor(key); // Спроба відкрити двері ключем
-house.comeIn(person); // Спроба увійти в дім
+house.openDoor(key);
+house.comeIn(person);
 
 export {};
