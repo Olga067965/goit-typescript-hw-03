@@ -11,52 +11,66 @@
 // export { };
 
 
+// Клас Key
 class Key {
-  generateSignature(): string {
-    return Math.random().toString(36).substring(7);
+  private signature: number;
+  constructor() {
+    this.signature = Math.random();
+  }
+  getSignature() {
+    return this.signature;
   }
 }
 
+// Клас Person
 class Person {
   private key: Key;
-  constructor() {
-    this.key = new Key(); 
+  constructor(key: Key) {
+    this.key = key;
   }
-  getKey(): Key {
+  getKey() {
     return this.key;
   }
 }
 
-class House {
-  private doorLocked: boolean = true;
-  private key: Key | undefined;
+// Абстрактний клас House
+abstract class House {
+  protected door: boolean = false;
+  protected key: Key;
+  private tenants: Person[] = [];
+  constructor(key: Key) {
+    this.key = key;
+  }
 
-  unlockDoor(key: Key) {
-    const signature = key.generateSignature();
-
-    if (signature === this.key?.generateSignature()) {
-      this.doorLocked = false;
-      console.log('Двері відчинено.');
+  comeIn(person: Person) {
+    if (this.door) {
+      this.tenants.push(person);
+      console.log("Людина увійшла в дім.");
     } else {
-      console.log('Невірний ключ. Двері залишаються зачиненими.');
+      console.log("Двері зачинені. Людина не може увійти.");
     }
   }
 
-  enterHouse(person: Person) {
-    if (!this.doorLocked) {
-      console.log('Особа увійшла до будинку.');
+  abstract openDoor(key: Key): void;
+}
+
+// Клас MyHouse успадкуємо від абстрактного класу House
+class MyHouse extends House {
+  openDoor(key: Key) {
+    if (key.getSignature() === this.key.getSignature()) {
+      this.door = true;
+      console.log("Двері відчинено.");
     } else {
-      console.log('Двері зачинені. Особа не може увійти.');
+      console.log("Невірний ключ. Двері залишаються зачиненими.");
     }
   }
 }
 
 const key = new Key();
-const person = new Person();
-const house = new House();
+const person = new Person(key);
+const house = new MyHouse(key);
 
-house.key = key; 
-house.unlockDoor(key);
-house.enterHouse(person);
+house.openDoor(key); // Спроба відкрити двері ключем
+house.comeIn(person); // Спроба увійти в дім
 
 export {};
